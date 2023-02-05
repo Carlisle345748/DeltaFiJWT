@@ -8,6 +8,10 @@ import (
 )
 
 func main() {
+	if err := InitDB(); err != nil {
+		log.Fatalf("initilize databse fialed: %v", err)
+	}
+
 	r := gin.Default()
 
 	authMiddleware, err := CreateJWTMiddleware()

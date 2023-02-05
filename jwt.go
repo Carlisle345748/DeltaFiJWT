@@ -54,16 +54,22 @@ func LoginHandler(c *gin.Context) (interface{}, error) {
 	if err := c.ShouldBind(&login); err != nil {
 		return "", jwt.ErrMissingLoginValues
 	}
-	userID := login.Email
+
+	email := login.Email
 	password := login.Password
 
-	if userID == "cuizk" && password == "123" {
+	if email == "cuizk" && password == "123" {
 		return &User{
-			Email:     userID,
+			Email:     email,
 			FirstName: "Zikun",
 			LastName:  "Cui",
 		}, nil
 	}
 
-	return nil, jwt.ErrFailedAuthentication
+	user, err := Authenticate(email, password)
+	if err != nil {
+		return nil, jwt.ErrFailedAuthentication
+	}
+
+	return user, nil
 }
