@@ -35,6 +35,9 @@ func Authenticate(email, password string) (*User, error) {
 	user := &User{}
 	result := DB.Where("email = ?", email).First(&user)
 	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, errors.New("incorrect email or password")
+		}
 		return nil, result.Error
 	}
 	if user.Password != password {
