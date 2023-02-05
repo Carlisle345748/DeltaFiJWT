@@ -1,20 +1,24 @@
 package main
 
 import (
+	"deltaFiJWT/jwt"
 	"log"
 	"net/http"
+
+	"deltaFiJWT/controller"
+	"deltaFiJWT/dao"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	if err := InitDB(); err != nil {
+	if err := dao.InitDB(); err != nil {
 		log.Fatalf("initilize databse fialed: %v", err)
 	}
 
 	r := gin.Default()
 
-	authMiddleware, err := CreateJWTMiddleware()
+	authMiddleware, err := jwt.CreateJWTMiddleware()
 	if err != nil {
 		log.Fatalf("JWT middleware intilization error: %v", err)
 	}
@@ -29,10 +33,13 @@ func main() {
 	r.POST("/login", authMiddleware.LoginHandler)
 	r.GET("/logout", authMiddleware.LogoutHandler)
 
-	auth := r.Group("/auth")
+	auth := r.Group("/")
 	auth.Use(authMiddleware.MiddlewareFunc())
-	auth.GET("/refresh_token", authMiddleware.RefreshHandler)
-	auth.GET("/hello", HelloHandler)
+	auth.GET("/refreshToken", authMiddleware.RefreshHandler)
+	auth.GET("/hello", controller.HelloHandler)
+	auth.PUT("/user", controller.CreateUserHandler)
+	auth.POST("/user", controller.UpdateUserHandler)
+	auth.DELETE("/user", controller.DeleteUserHandler)
 
 	if err := r.Run(); err != nil {
 		log.Fatalf("start server failed %v", err)

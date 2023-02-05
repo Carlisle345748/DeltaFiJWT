@@ -1,11 +1,13 @@
-package main
+package jwt
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
 
+	"deltaFiJWT/dao"
+
 	"github.com/appleboy/gin-jwt/v2"
+	"github.com/gin-gonic/gin"
 )
 
 type Login struct {
@@ -24,10 +26,8 @@ func CreateJWTMiddleware() (*jwt.GinJWTMiddleware, error) {
 		MaxRefresh:  time.Hour,
 		IdentityKey: IdentityKey,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*User); ok {
-				return jwt.MapClaims{
-					IdentityKey: v.Email,
-				}
+			if v, ok := data.(*dao.User); ok {
+				return jwt.MapClaims{IdentityKey: v.ID}
 			}
 			return jwt.MapClaims{}
 		},
@@ -55,20 +55,9 @@ func LoginHandler(c *gin.Context) (interface{}, error) {
 		return "", jwt.ErrMissingLoginValues
 	}
 
-	email := login.Email
-	password := login.Password
-
-	if email == "cuizk" && password == "123" {
-		return &User{
-			Email:     email,
-			FirstName: "Zikun",
-			LastName:  "Cui",
-		}, nil
-	}
-
-	user, err := Authenticate(email, password)
+	user, err := dao.Authenticate(login.Email, login.Password)
 	if err != nil {
-		return nil, jwt.ErrFailedAuthentication
+		return nil, err
 	}
 
 	return user, nil
