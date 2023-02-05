@@ -31,6 +31,15 @@ func InitDB() error {
 	return nil
 }
 
+func InitTestDB() error {
+	instance, err := gorm.Open(sqlite.Open("deltaFi_test.db"), &gorm.Config{})
+	if err != nil {
+		return err
+	}
+	DB = instance
+	return nil
+}
+
 func Authenticate(email, password string) (*User, error) {
 	user := &User{}
 	result := DB.Where("email = ?", email).First(&user)
@@ -70,7 +79,7 @@ func GetUser(ID uint) (*User, error) {
 }
 
 func UpdateUser(input types.UpdateUserInput) error {
-	result := DB.Where("id = ?", input.ID).Updates(map[string]interface{}{
+	result := DB.Model(&User{}).Where("id = ?", input.ID).Updates(map[string]interface{}{
 		"first_name": input.FirstName,
 		"last_name":  input.LastName,
 	})
