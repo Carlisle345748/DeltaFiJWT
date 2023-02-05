@@ -32,12 +32,12 @@ func main() {
 
 	r.POST("/login", authMiddleware.LoginHandler)
 	r.GET("/logout", authMiddleware.LogoutHandler)
+	r.PUT("/user", controller.CreateUserHandler)
 
 	auth := r.Group("/")
 	auth.Use(authMiddleware.MiddlewareFunc())
 	auth.GET("/refreshToken", authMiddleware.RefreshHandler)
 	auth.GET("/hello", controller.HelloHandler)
-	auth.PUT("/user", controller.CreateUserHandler)
 	auth.POST("/user", controller.UpdateUserHandler)
 	auth.DELETE("/user", controller.DeleteUserHandler)
 
