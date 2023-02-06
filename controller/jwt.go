@@ -17,6 +17,7 @@ type Login struct {
 
 const IdentityKey = "id"
 
+// CreateJWTMiddleware create a JWT authenticate middleware
 func CreateJWTMiddleware() (*jwt.GinJWTMiddleware, error) {
 	return jwt.New(&jwt.GinJWTMiddleware{
 		Realm: "deltaFi",
@@ -63,6 +64,7 @@ func CreateJWTMiddleware() (*jwt.GinJWTMiddleware, error) {
 	})
 }
 
+// LoginHandler is JWT login handler
 func LoginHandler(c *gin.Context) (interface{}, error) {
 	var login Login
 	if err := c.ShouldBind(&login); err != nil {

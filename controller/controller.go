@@ -22,6 +22,7 @@ const (
 	CodeLoginFail      = 7
 )
 
+// SetUpRouter set up router
 func SetUpRouter(r *gin.Engine) {
 	authMiddleware, err := CreateJWTMiddleware()
 	if err != nil {
@@ -40,6 +41,7 @@ func SetUpRouter(r *gin.Engine) {
 	auth.DELETE("/user", DeleteUserHandler)
 }
 
+// HelloHandler say hello to user
 func HelloHandler(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
 	userId := uint(claims[IdentityKey].(float64))
@@ -59,6 +61,7 @@ func HelloHandler(c *gin.Context) {
 	})
 }
 
+// CreateUserHandler create user
 func CreateUserHandler(c *gin.Context) {
 	input := types.CreateUserInput{}
 	if err := c.ShouldBind(&input); err != nil {
@@ -84,6 +87,7 @@ func CreateUserHandler(c *gin.Context) {
 	})
 }
 
+// UpdateUserHandler update user firstname and lastname
 func UpdateUserHandler(c *gin.Context) {
 	input := types.UpdateUserInput{}
 	if err := c.ShouldBind(&input); err != nil {
@@ -108,6 +112,7 @@ func UpdateUserHandler(c *gin.Context) {
 	})
 }
 
+// DeleteUserHandler delete user
 func DeleteUserHandler(c *gin.Context) {
 	input := types.DeleteUserInput{}
 	if err := c.ShouldBind(&input); err != nil {
