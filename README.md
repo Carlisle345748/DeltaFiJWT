@@ -1,5 +1,8 @@
 # DeltaFi Project
 A simple email signup, login, logout web backend using Gin, GORM, JWT and SQLite.
+- Why Gin? Gin is the one of the most popular web framework
+- Why GORM? GORM is a popular and flexible ORM framework
+- Why SQLite? Simple and fast local database that suitable for demo project
 
 ```
 .
