@@ -19,6 +19,7 @@ const (
 	CodeCreateUserFail = 3
 	CodeUpdateUserFail = 4
 	CodeDeleteUserFail = 6
+	CodeLoginFail      = 7
 )
 
 func SetUpRouter(r *gin.Engine) {

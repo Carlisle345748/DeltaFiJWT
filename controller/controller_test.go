@@ -141,7 +141,10 @@ func TestLogin(t *testing.T) {
 		Password: "123312",
 	}
 	w = login(loginInput, t, router)
+	body, err = io.ReadAll(w.Body)
+	assert.NoError(t, err)
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
+	assert.EqualValues(t, CodeLoginFail, gjson.Get(string(body), "code").Int())
 }
 
 func TestUpdateUser(t *testing.T) {

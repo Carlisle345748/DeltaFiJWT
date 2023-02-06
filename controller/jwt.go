@@ -31,10 +31,18 @@ func CreateJWTMiddleware() (*jwt.GinJWTMiddleware, error) {
 			}
 			return jwt.MapClaims{}
 		},
+		LoginResponse: func(c *gin.Context, code int, token string, time time.Time) {
+			c.JSON(http.StatusOK, gin.H{
+				"code":        CodeSuccess,
+				"message":     "success",
+				"token":       token,
+				"expire_time": time,
+			})
+		},
 		Authenticator: LoginHandler,
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			c.JSON(code, gin.H{
-				"code":    code,
+				"code":    CodeLoginFail,
 				"message": message,
 			})
 		},
