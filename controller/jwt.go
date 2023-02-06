@@ -39,6 +39,12 @@ func CreateJWTMiddleware() (*jwt.GinJWTMiddleware, error) {
 				"expire_time": time,
 			})
 		},
+		LogoutResponse: func(c *gin.Context, code int) {
+			c.JSON(http.StatusOK, gin.H{
+				"code":    CodeSuccess,
+				"message": "success",
+			})
+		},
 		Authenticator: LoginHandler,
 		Unauthorized: func(c *gin.Context, code int, message string) {
 			c.JSON(code, gin.H{
