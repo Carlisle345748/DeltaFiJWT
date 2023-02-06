@@ -1,7 +1,6 @@
 package main
 
 import (
-	"deltaFiJWT/jwt"
 	"log"
 	"net/http"
 
@@ -17,29 +16,13 @@ func main() {
 	}
 
 	r := gin.Default()
-
-	authMiddleware, err := jwt.CreateJWTMiddleware()
-	if err != nil {
-		log.Fatalf("JWT middleware intilization error: %v", err)
-	}
-
 	r.NoRoute(func(context *gin.Context) {
 		context.JSON(http.StatusNotFound, gin.H{
 			"code":    http.StatusNotFound,
 			"message": "Page not found",
 		})
 	})
-
-	r.POST("/login", authMiddleware.LoginHandler)
-	r.GET("/logout", authMiddleware.LogoutHandler)
-	r.PUT("/user", controller.CreateUserHandler)
-
-	auth := r.Group("/")
-	auth.Use(authMiddleware.MiddlewareFunc())
-	auth.GET("/refreshToken", authMiddleware.RefreshHandler)
-	auth.GET("/hello", controller.HelloHandler)
-	auth.POST("/user", controller.UpdateUserHandler)
-	auth.DELETE("/user", controller.DeleteUserHandler)
+	controller.SetUpRouter(r)
 
 	if err := r.Run(); err != nil {
 		log.Fatalf("start server failed %v", err)

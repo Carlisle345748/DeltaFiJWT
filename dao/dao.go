@@ -12,11 +12,11 @@ import (
 var DB *gorm.DB
 
 type User struct {
-	gorm.Model
-	Email     string `gorm:"unique"`
-	FirstName string
-	LastName  string
-	Password  string
+	ID        uint   `gorm:"primarykey" json:"id"`
+	Email     string `gorm:"unique;not null" json:"email"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Password  string `gorm:"not null" json:"-"`
 }
 
 func InitDB() error {

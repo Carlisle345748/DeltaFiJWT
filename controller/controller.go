@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"deltaFiJWT/dao"
@@ -20,10 +21,28 @@ const (
 	CodeDeleteUserFail = 6
 )
 
+func SetUpRouter(r *gin.Engine) {
+	authMiddleware, err := CreateJWTMiddleware()
+	if err != nil {
+		log.Fatalf("JWT middleware intilization error: %v", err)
+	}
+
+	r.POST("/login", authMiddleware.LoginHandler)
+	r.GET("/logout", authMiddleware.LogoutHandler)
+	r.PUT("/user", CreateUserHandler)
+
+	auth := r.Group("/")
+	auth.Use(authMiddleware.MiddlewareFunc())
+	auth.GET("/refreshToken", authMiddleware.RefreshHandler)
+	auth.GET("/hello", HelloHandler)
+	auth.POST("/user", UpdateUserHandler)
+	auth.DELETE("/user", DeleteUserHandler)
+}
+
 func HelloHandler(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
-	userId := claims[jwt.IdentityKey]
-	user, err := dao.GetUser(userId.(uint))
+	userId := uint(claims[IdentityKey].(float64))
+	user, err := dao.GetUser(userId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":    CodeUserNotFound,
